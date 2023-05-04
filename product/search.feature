@@ -14,7 +14,7 @@ Feature: Search
       | scroll     | Scroll |
 
   Scenario Outline: Partial search for a product
-    When the user enters <partialText>
+    When the user enters <partialText> into the search bar
     Then the user is provided a list with multiple <returnedEntries>
 
     Examples: 
