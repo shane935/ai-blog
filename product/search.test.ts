@@ -6,12 +6,16 @@ import { searchProducts, SearchResult } from './search';
 interface State {
   driver: any;
   products: SearchResult[];
+  searchBar: WebElement;
+  result: SearchResult[];
 }
 
 const withState = (fn: (state: State) => void) => {
   const state: State = {
     driver: new Builder().forBrowser('chrome').build(),
     products: [],
+    searchBar: {} as WebElement,
+    result: [],
   };
 
   return () => {
