@@ -1,0 +1,24 @@
+{
+  "name": "order-app",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shane935/ai-blog.git"
+  },
+  "author": "Shane Patrick",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shane935/ai-blog/issues"
+  },
+  "homepage": "https://github.com/shane935/ai-blog#readme",
+  "dependencies": {
+    "@cucumber/cucumber": "^9.1.2",
+    "chai": "^4.3.7",
+    "selenium-webdriver": "^4.9.2"
+  }
+}
