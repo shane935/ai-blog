@@ -1,7 +1,11 @@
 import { Builder, By, until, WebElement } from 'selenium-webdriver';
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from 'chai';
-import { searchProducts, SearchResult } from './search';
+
+export interface SearchResult {
+  title: string;
+  error?: string;
+}
 
 interface State {
   driver: any;
@@ -42,8 +46,6 @@ Given('a search bar', withState(async state => {
 
 When('the user enters {string} into the search bar', withState(async state => async (input: string) => {
   await state.searchBar.sendKeys(input);
-  const searchText = await state.searchBar.getAttribute('value');
-  state.result = searchProducts(searchText, state.products);
 }));
 
 Then('the paginated list shows the corresponding {string}', withState(async state => async (title: string) => {
