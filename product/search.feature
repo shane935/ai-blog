@@ -14,7 +14,7 @@ Feature: Search
       | scroll     | Scroll |
 
   Scenario Outline: Partial search for a product
-    When the user enters <partialText>
+    When the user enters <partialText> into the search bar
     Then the user is provided a list with multiple <returnedEntries>
 
     Examples: 
@@ -23,8 +23,8 @@ Feature: Search
       | scroll      | Caramel Scroll, Vanilla Scroll |
 
   Scenario Outline: Failed search for a product
-    When the user enters <failedText>
-    Then the user is provided with a <message>
+    When the user enters <failedText> into the search bar
+    Then the user is provided with an error message <message>
 
     Examples: 
       | failedText | message                                           |
