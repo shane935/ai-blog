@@ -1,68 +1,79 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { By, WebElement } from 'selenium-webdriver';
+// Import the necessary modules
+import { Given, When, Then, After } from '@cucumber/cucumber';
 import { expect } from 'chai';
-import { getDriver, getElement, getElements, waitElementClickable } from './utils';
+import { Builder, By, until, WebDriver } from 'selenium-webdriver';
 
-interface State {
-    paginatedList: WebElement[];
-    deleteButton: WebElement;
-    checkboxes: WebElement[];
-    massDeleteButton: WebElement;
-}
+// Import our constants
+import { 
+  DELETE_BUTTON_SELECTOR, 
+  PRODUCT_LIST_SELECTOR, 
+  CHECKBOX_SELECTOR, 
+  MASS_DELETE_BUTTON_SELECTOR, 
+  URL_TO_BE_ADDED 
+} from './constants';
 
-const state: State = {
-    paginatedList: [],
-    deleteButton: null,
-    checkboxes: [],
-    massDeleteButton: null,
-};
+let driver: WebDriver = new Builder().forBrowser('firefox').build();
 
-Given('a paginated list of available products', async function () {
-    state.paginatedList = await getElements(By.css('.product'));
+Given('a paginated list of available products', async function() {
+    await driver.get(URL_TO_BE_ADDED);
 });
 
-Given('a delete button represented by a cross icon for each product', async function () {
-    state.deleteButton = await getElement(By.css('.delete-button'));
+// Scenario: Delete a product
+Given('a delete button represented by a cross icon for each product', async function() {
+    const deleteButtons = await driver.findElements(By.css(DELETE_BUTTON_SELECTOR));
+    expect(deleteButtons.length).to.be.above(0);
 });
 
-Given('a checkbox next to each product', async function () {
-    state.checkboxes = await getElements(By.css('.product-checkbox'));
+When('the user clicks the delete button for a specific product', async function() {
+    const deleteButton = await driver.findElement(By.css(DELETE_BUTTON_SELECTOR));
+    await deleteButton.click();
 });
 
-Given('a mass delete button', async function () {
-    state.massDeleteButton = await getElement(By.id('mass-delete-button'));
+Then('the specific product is removed from the paginated list', async function() {
+    await driver.wait(until.elementIsNotVisible(driver.findElement(By.css(PRODUCT_LIST_SELECTOR + ':first-child'))));
 });
 
-When('the user clicks the delete button for a specific product', async function () {
-    await state.deleteButton.click();
+// Scenario: Enable mass delete button
+Given('a checkbox next to each product', async function() {
+    const checkboxes = await driver.findElements(By.css(CHECKBOX_SELECTOR));
+    expect(checkboxes.length).to.be.above(0);
 });
 
-When('the user selects at least one product checkbox', async function () {
-    await state.checkboxes[0].click();
+Given('a mass delete button', async function() {
+    const massDeleteButton = await driver.findElement(By.css(MASS_DELETE_BUTTON_SELECTOR));
+    expect(massDeleteButton).to.not.be.null;
 });
 
-When('the user selects multiple product checkboxes', async function () {
-    for (let checkbox of state.checkboxes.slice(0, 2)) {
-        await checkbox.click();
+When('the user selects at least one product checkbox', async function() {
+    const checkbox = await driver.findElement(By.css(CHECKBOX_SELECTOR));
+    await checkbox.click();
+});
+
+Then('the mass delete button becomes clickable', async function() {
+    const massDeleteButton = await driver.findElement(By.css(MASS_DELETE_BUTTON_SELECTOR));
+    expect(await massDeleteButton.isEnabled()).to.be.true;
+});
+
+// Scenario: Delete multiple products
+When('the user selects multiple product checkboxes', async function() {
+    const checkboxes = await driver.findElements(By.css(CHECKBOX_SELECTOR));
+    for (let i = 0; i < 2; i++) {
+        await checkboxes[i].click();
     }
 });
 
-When('the user clicks the mass delete button', async function () {
-    await waitElementClickable(state.massDeleteButton);
-    await state.massDeleteButton.click();
+When('the user clicks the mass delete button', async function() {
+    const massDeleteButton = await driver.findElement(By.css(MASS_DELETE_BUTTON_SELECTOR));
+    await massDeleteButton.click();
 });
 
-Then('the specific product is removed from the paginated list', async function () {
-    const updatedList = await getElements(By.css('.product'));
-    expect(updatedList.length).to.equal(state.paginatedList.length - 1);
+Then('the selected products are removed from the paginated list', async function() {
+    await driver.wait(until.elementsLocated(By.css(PRODUCT_LIST_SELECTOR)), 10000);
+    const products = await driver.findElements(By.css(PRODUCT_LIST_SELECTOR));
+    expect(products.length).to.be.below(2);
 });
 
-Then('the mass delete button becomes clickable', async function () {
-    const isClickable = await state.massDeleteButton.isEnabled();
-    expect(isClickable).to.be.true;
-});
-
-Then('the selected products are removed from the paginated list', async function () {
-    const updatedList = await getElements(By.css('.product'));
-    expect(updatedList.length).to.equal(state.paginatedList.length - 2);
+// Close the WebDriver instance
+After(async function() {
+    await driver.quit();
 });
