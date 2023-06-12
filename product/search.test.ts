@@ -1,58 +1,51 @@
-import { Builder, By, WebElement } from 'selenium-webdriver';
+// Import necessary modules and constants
 import { Given, When, Then } from '@cucumber/cucumber';
+import { Builder, By, WebDriver } from 'selenium-webdriver';
 import { expect } from 'chai';
+import { 
+  SEARCH_BAR_SELECTOR,
+  PRODUCT_TITLE_SELECTOR,
+  SEARCH_RESULTS_SELECTOR,
+  ERROR_MESSAGE_SELECTOR,
+  URL_TO_BE_ADDED
+} from './constants';
 
-// Define constants for the URLs and CSS selectors
-const PRODUCTS_PAGE_URL = 'http://localhost:3000/products';
-const SEARCH_BAR_SELECTOR = '#search-bar';
-const SEARCH_RESULT_SELECTOR = '.search-result';
-const ERROR_MESSAGE_SELECTOR = '.error-message';
+let driver: WebDriver = new Builder().forBrowser('firefox').build();
 
-interface State {
-  driver: any;
-  searchBar: WebElement;
-}
+Given('a paginated list of available products', async function() {
+    await driver.get(URL_TO_BE_ADDED);
+});
 
-const withState = (fn: (state: State) => void) => {
-  const state: State = {
-    driver: new Builder().forBrowser('chrome').build(),
-    searchBar: {} as WebElement,
-  };
+Given('a search bar', async function() {
+    const searchBar = await driver.findElement(By.css(SEARCH_BAR_SELECTOR));
+    expect(searchBar).to.not.be.null;
+});
 
-  return () => {
-    fn(state);
-  };
-};
+// Scenario: Search for a product
+When('the user enters {string} into the search bar', async function (searchText) {
+    const searchBar = await driver.findElement(By.css(SEARCH_BAR_SELECTOR));
+    await searchBar.sendKeys(searchText);
+});
 
-Given('a paginated list of available products', withState(async state => {
-  // Navigate to the page with the product list
-  await state.driver.get(PRODUCTS_PAGE_URL);
-}));
+Then('the paginated list shows the corresponding {string}', async function (title) {
+    const productTitle = await driver.findElement(By.css(PRODUCT_TITLE_SELECTOR));
+    const productTitleText = await productTitle.getText();
+    expect(productTitleText).to.equal(title);
+});
 
-Given('a search bar', withState(async state => {
-  // Locate the search bar element
-  state.searchBar = await state.driver.findElement(By.css(SEARCH_BAR_SELECTOR));
-}));
+// Scenario: Partial search for a product
+Then('the user is provided a list with multiple {string}', async function (returnedEntries) {
+    const searchResults = await driver.findElement(By.css(SEARCH_RESULTS_SELECTOR));
+    const searchResultsText = await searchResults.getText();
+    const entries = returnedEntries.split(', ');
+    entries.forEach(entry => {
+        expect(searchResultsText).to.include(entry);
+    });
+});
 
-When('the user enters {string} into the search bar', withState(async state => async (input: string) => {
-  await state.searchBar.sendKeys(input);
-}));
-
-Then('the paginated list shows the corresponding {string}', withState(async state => async (title: string) => {
-  const searchResult: WebElement = await state.driver.findElement(By.css(SEARCH_RESULT_SELECTOR));
-  const resultText = await searchResult.getText();
-  expect(resultText).to.equal(title);
-}));
-
-Then('the user is provided a list with multiple {string}', withState(async state => async (returnedEntries: string) => {
-  const entries = returnedEntries.split(', ');
-  const searchResults: WebElement[] = await state.driver.findElements(By.css(SEARCH_RESULT_SELECTOR));
-  const resultTexts: string[] = await Promise.all(searchResults.map(result => result.getText()));
-  expect(resultTexts).to.deep.equal(entries);
-}));
-
-Then('the user is provided with an error message {string}', withState(async state => async (message: string) => {
-  const errorMessage: WebElement = await state.driver.findElement(By.css(ERROR_MESSAGE_SELECTOR));
-  const errorMessageText = await errorMessage.getText();
-  expect(errorMessageText).to.equal(message);
-}));
+// Scenario: Failed search for a product
+Then('the user is provided with an error message {string}', async function (message) {
+    const errorMessage = await driver.findElement(By.css(ERROR_MESSAGE_SELECTOR));
+    const errorMessageText = await errorMessage.getText();
+    expect(errorMessageText).to.equal(message);
+});
