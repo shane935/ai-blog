@@ -7,13 +7,13 @@ import {
   PRODUCT_TITLE_SELECTOR,
   SEARCH_RESULTS_SELECTOR,
   ERROR_MESSAGE_SELECTOR,
-  URL_TO_BE_ADDED
+  URL
 } from './constants';
 
 let driver: WebDriver = new Builder().forBrowser('firefox').build();
 
 Given('a paginated list of available products', async function() {
-    await driver.get(URL_TO_BE_ADDED);
+    await driver.get(URL);
 });
 
 Given('a search bar', async function() {
