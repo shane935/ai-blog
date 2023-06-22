@@ -1,6 +1,6 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { Builder, By, until, WebDriver } from "selenium-webdriver";
-import { expect } from "@jest/globals";
+import { expect } from "chai";
 import {
   URL,
   PRODUCT_LIST_PAGE,
@@ -8,7 +8,7 @@ import {
   PRODUCT_DETAIL_SELECTOR,
   RIGHT_ARROW_SELECTOR,
   LEFT_ARROW_SELECTOR,
-} from "./constants";
+} from "./constants.ts";
 
 let driver: WebDriver;
 
@@ -29,7 +29,7 @@ Then(
       10000
     );
     let isProductDetailDisplayed = await productDetail.isDisplayed();
-    expect(isProductDetailDisplayed).toBeTruthy();
+    expect(isProductDetailDisplayed).to.be.true;
   }
 );
 
@@ -47,9 +47,9 @@ Then("each of the products has a name, a volume and a cost", async function () {
     const volume = await volumeElement.getText();
     const cost = await costElement.getText();
 
-    expect(name).not.toBe("");
-    expect(volume).not.toBe("");
-    expect(cost).not.toBe("");
+    expect(name).to.not.be.empty;
+    expect(volume).to.not.be.empty;
+    expect(cost).to.not.be.empty;
   }
 });
 
@@ -59,7 +59,7 @@ Then("the right pagination arrow is visible", async function () {
     10000
   );
   let isRightArrowDisplayed = await rightArrow.isDisplayed();
-  expect(isRightArrowDisplayed).toBeTruthy();
+  expect(isRightArrowDisplayed).to.be.true;
 });
 
 Then("the left pagination arrow is visible", async function () {
@@ -68,7 +68,7 @@ Then("the left pagination arrow is visible", async function () {
     10000
   );
   let isLeftArrowDisplayed = await leftArrow.isDisplayed();
-  expect(isLeftArrowDisplayed).toBeTruthy();
+  expect(isLeftArrowDisplayed).to.be.true;
 });
 
 When(
@@ -85,6 +85,6 @@ Then(
   async function (page: number) {
     let expectedUrl = `${URL}${PRODUCT_LIST_PAGE}/${page}`;
     await driver.wait(until.urlIs(expectedUrl), 10000);
-    expect(await driver.getCurrentUrl()).toBe(expectedUrl);
+    expect(await driver.getCurrentUrl()).to.equal(expectedUrl);
   }
 );

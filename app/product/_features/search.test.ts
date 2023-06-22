@@ -1,14 +1,14 @@
 // Import necessary modules and constants
 import { Given, When, Then } from "@cucumber/cucumber";
 import { Builder, By, WebDriver } from "selenium-webdriver";
-import { expect } from "@jest/globals";
+import { expect } from "chai";
 import {
   SEARCH_BAR_SELECTOR,
   PRODUCT_TITLE_SELECTOR,
   SEARCH_RESULTS_SELECTOR,
   ERROR_MESSAGE_SELECTOR,
   URL,
-} from "./constants";
+} from "./constants.ts";
 
 let driver: WebDriver = new Builder().forBrowser("firefox").build();
 
@@ -18,7 +18,7 @@ Given("a paginated list of available products", async function () {
 
 Given("a search bar", async function () {
   const searchBar = await driver.findElement(By.css(SEARCH_BAR_SELECTOR));
-  expect(searchBar).not.toBeNull();
+  expect(searchBar).to.exist;
 });
 
 // Scenario: Search for a product
@@ -37,21 +37,21 @@ Then(
       By.css(PRODUCT_TITLE_SELECTOR)
     );
     const productTitleText = await productTitle.getText();
-    expect(productTitleText).toBe(title);
+    expect(productTitleText).to.equal(title);
   }
 );
 
 // Scenario: Partial search for a product
 Then(
   "the user is provided a list with multiple {string}",
-  async function (returnedEntries) {
+  async function (returnedEntries: string) {
     const searchResults = await driver.findElement(
       By.css(SEARCH_RESULTS_SELECTOR)
     );
     const searchResultsText = await searchResults.getText();
     const entries = returnedEntries.split(", ");
     entries.forEach((entry) => {
-      expect(searchResultsText).toContain(entry);
+      expect(searchResultsText).to.contain(entry);
     });
   }
 );
@@ -64,6 +64,6 @@ Then(
       By.css(ERROR_MESSAGE_SELECTOR)
     );
     const errorMessageText = await errorMessage.getText();
-    expect(errorMessageText).toBe(message);
+    expect(errorMessageText).to.equal(message);
   }
 );
