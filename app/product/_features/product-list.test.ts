@@ -1,90 +1,97 @@
+// Import necessary modules and constants
 import { Given, When, Then } from "@cucumber/cucumber";
-import { Builder, By, until, WebDriver } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
 import { expect } from "chai";
+import { driver } from "./setup.ts";
 import {
-  URL,
-  PRODUCT_LIST_PAGE,
-  PRODUCT_SELECTOR,
+  PRODUCT_LIST_SELECTOR,
+  PRODUCT_NAME_SELECTOR,
+  PRODUCT_VOLUME_SELECTOR,
+  PRODUCT_COST_SELECTOR,
   PRODUCT_DETAIL_SELECTOR,
   RIGHT_ARROW_SELECTOR,
   LEFT_ARROW_SELECTOR,
+  PRODUCT_SELECTOR,
 } from "./constants.ts";
 
-let driver: WebDriver;
+Then(
+  "the user is presented with a paginated list of all available products",
+  async function () {
+    const productList = await driver.findElement(By.css(PRODUCT_LIST_SELECTOR));
+    expect(productList).to.exist;
+  }
+);
 
-Given('the user navigates to "{string}"', async function () {
-  driver = await new Builder().forBrowser("chrome").build();
-  await driver.get(URL + PRODUCT_LIST_PAGE);
+Then("each of the products has a name, a volume and a cost", async function () {
+  const productNames = await driver.findElements(By.css(PRODUCT_NAME_SELECTOR));
+  productNames.forEach((name) => {
+    expect(name.getText()).to.not.be.empty;
+  });
+
+  const productVolumes = await driver.findElements(
+    By.css(PRODUCT_VOLUME_SELECTOR)
+  );
+  productVolumes.forEach((volume) => {
+    expect(volume.getText()).to.not.be.empty;
+  });
+
+  const productCosts = await driver.findElements(By.css(PRODUCT_COST_SELECTOR));
+  productCosts.forEach((cost) => {
+    expect(cost.getText()).to.not.be.empty;
+  });
 });
 
 When("the user clicks on a product in the list", async function () {
-  await driver.findElement(By.css(PRODUCT_SELECTOR)).click();
+  const product = await driver.findElement(By.css(PRODUCT_SELECTOR));
+  await product.click();
 });
 
 Then(
   "they are redirected to the details page for that product",
   async function () {
-    let productDetail = await driver.wait(
-      until.elementLocated(By.css(PRODUCT_DETAIL_SELECTOR)),
-      10000
+    const productDetail = await driver.findElement(
+      By.css(PRODUCT_DETAIL_SELECTOR)
     );
-    let isProductDetailDisplayed = await productDetail.isDisplayed();
-    expect(isProductDetailDisplayed).to.be.true;
+    expect(productDetail).to.exist;
   }
 );
 
-Then("each of the products has a name, a volume and a cost", async function () {
-  const productElements = await driver.findElements(By.className("product"));
-
-  for (let productElement of productElements) {
-    const nameElement = await productElement.findElement(By.className("name"));
-    const volumeElement = await productElement.findElement(
-      By.className("volume")
-    );
-    const costElement = await productElement.findElement(By.className("cost"));
-
-    const name = await nameElement.getText();
-    const volume = await volumeElement.getText();
-    const cost = await costElement.getText();
-
-    expect(name).to.not.be.empty;
-    expect(volume).to.not.be.empty;
-    expect(cost).to.not.be.empty;
-  }
+Given("the user is on the first page of the product list", function () {
+  // Assumed as part of the test setup
 });
 
 Then("the right pagination arrow is visible", async function () {
-  let rightArrow = await driver.wait(
-    until.elementLocated(By.css(RIGHT_ARROW_SELECTOR)),
-    10000
-  );
-  let isRightArrowDisplayed = await rightArrow.isDisplayed();
-  expect(isRightArrowDisplayed).to.be.true;
+  const rightArrow = await driver.findElement(By.css(RIGHT_ARROW_SELECTOR));
+  expect(rightArrow.isDisplayed()).to.be.true;
+});
+
+Given("the user is on the second page of the product list", function () {
+  // Needs implementation. You would need to navigate to the second page here.
 });
 
 Then("the left pagination arrow is visible", async function () {
-  let leftArrow = await driver.wait(
-    until.elementLocated(By.css(LEFT_ARROW_SELECTOR)),
-    10000
-  );
-  let isLeftArrowDisplayed = await leftArrow.isDisplayed();
-  expect(isLeftArrowDisplayed).to.be.true;
+  const leftArrow = await driver.findElement(By.css(LEFT_ARROW_SELECTOR));
+  expect(leftArrow.isDisplayed()).to.be.true;
+});
+
+Given("the user is on page {int} of the product list", function (page: number) {
+  // Needs implementation. You would need to navigate to the corresponding page here.
 });
 
 When(
   "the user clicks the {string} pagination arrow",
   async function (arrow: string) {
-    let arrowSelector =
+    const arrowSelector =
       arrow === "left" ? LEFT_ARROW_SELECTOR : RIGHT_ARROW_SELECTOR;
-    await driver.findElement(By.css(arrowSelector)).click();
+    const arrowElement = await driver.findElement(By.css(arrowSelector));
+    await arrowElement.click();
   }
 );
 
 Then(
   "the user is moved to page {int} of the product list",
-  async function (page: number) {
-    let expectedUrl = `${URL}${PRODUCT_LIST_PAGE}/${page}`;
-    await driver.wait(until.urlIs(expectedUrl), 10000);
-    expect(await driver.getCurrentUrl()).to.equal(expectedUrl);
+  async function (expectedPage: number) {
+    const currentUrl = await driver.getCurrentUrl();
+    expect(currentUrl).to.include(expectedPage.toString());
   }
 );

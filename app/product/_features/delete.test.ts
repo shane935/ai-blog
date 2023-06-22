@@ -1,7 +1,8 @@
 // Import the necessary modules
-import { Given, When, Then, After } from "@cucumber/cucumber";
+import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "chai";
-import { Builder, By, until, WebDriver } from "selenium-webdriver";
+import { By, until } from "selenium-webdriver";
+import { driver } from "./setup.ts";
 
 // Import our constants
 import {
@@ -11,12 +12,6 @@ import {
   MASS_DELETE_BUTTON_SELECTOR,
   URL,
 } from "./constants.ts";
-
-let driver: WebDriver = new Builder().forBrowser("firefox").build();
-
-Given("a paginated list of available products", async function () {
-  await driver.get(URL);
-});
 
 // Scenario: Delete a product
 Given(
@@ -101,8 +96,3 @@ Then(
     expect(products.length).to.be.below(2);
   }
 );
-
-// Close the WebDriver instance
-After(async function () {
-  await driver.quit();
-});

@@ -1,7 +1,7 @@
 {
   "default": {
     "paths": ["app/**/_features/*.feature"],
-    "import": ["app/**/_features/*.test.ts", "app/**/_features/constants.ts"],
+    "import": ["app/**/_features/*.test.ts"],
     "publishQuiet": true
   }
 }

@@ -1,4 +1,4 @@
-export const URL = "localhost:3000/product"; // replace with actual URL
+export const URL = "http://localhost:3000"; // replace with actual URL
 
 export const SEARCH_BAR_SELECTOR = ".search-bar";
 export const PRODUCT_TITLE_SELECTOR = ".product-title";
@@ -10,8 +10,11 @@ export const PRODUCT_LIST_SELECTOR = ".product-list";
 export const CHECKBOX_SELECTOR = ".checkbox";
 export const MASS_DELETE_BUTTON_SELECTOR = ".mass-delete-button";
 
-export const PRODUCT_LIST_PAGE = "product-list";
+export const PRODUCT_LIST_PAGE = "product";
 export const PRODUCT_SELECTOR = ".product";
 export const PRODUCT_DETAIL_SELECTOR = ".product-detail";
 export const RIGHT_ARROW_SELECTOR = ".right-arrow";
 export const LEFT_ARROW_SELECTOR = ".left-arrow";
+export const PRODUCT_NAME_SELECTOR = "";
+export const PRODUCT_VOLUME_SELECTOR = "";
+export const PRODUCT_COST_SELECTOR = "";

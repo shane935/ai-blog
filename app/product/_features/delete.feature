@@ -1,7 +1,8 @@
+@product @delete-product
 Feature: Product Deletion
 
   Background:
-    Given a paginated list of available products
+    Given the user navigates to the product page
 
   Scenario: Delete a product
     Given a delete button represented by a cross icon for each product

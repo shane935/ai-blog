@@ -1,20 +1,16 @@
 // Import necessary modules and constants
 import { Given, When, Then } from "@cucumber/cucumber";
-import { Builder, By, WebDriver } from "selenium-webdriver";
+import { By } from "selenium-webdriver";
 import { expect } from "chai";
+
+import { driver } from "./setup.ts";
+
 import {
   SEARCH_BAR_SELECTOR,
   PRODUCT_TITLE_SELECTOR,
   SEARCH_RESULTS_SELECTOR,
   ERROR_MESSAGE_SELECTOR,
-  URL,
 } from "./constants.ts";
-
-let driver: WebDriver = new Builder().forBrowser("firefox").build();
-
-Given("a paginated list of available products", async function () {
-  await driver.get(URL);
-});
 
 Given("a search bar", async function () {
   const searchBar = await driver.findElement(By.css(SEARCH_BAR_SELECTOR));
