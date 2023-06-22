@@ -1,11 +1,13 @@
+@product @product-list
 Feature: Product List
   As a small business owner placing an order
   I want to view and navigate the product list
   So that I can see all available products and their details
 
   Background:
-    Given the user navigates to "acme.com/product-list"
+    Given the user navigates to the product page
 
+  @now
   Scenario: User can view the product page
     Then the user is presented with a paginated list of all available products
     And each of the products has a name, a volume and a cost

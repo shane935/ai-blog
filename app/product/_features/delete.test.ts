@@ -1,7 +1,8 @@
 // Import the necessary modules
-import { Given, When, Then, After } from "@cucumber/cucumber";
-import { expect } from "@jest/globals";
-import { Builder, By, until, WebDriver } from "selenium-webdriver";
+import { Given, When, Then } from "@cucumber/cucumber";
+import { expect } from "chai";
+import { By, until } from "selenium-webdriver";
+import { driver } from "./setup.ts";
 
 // Import our constants
 import {
@@ -10,13 +11,7 @@ import {
   CHECKBOX_SELECTOR,
   MASS_DELETE_BUTTON_SELECTOR,
   URL,
-} from "./constants";
-
-let driver: WebDriver = new Builder().forBrowser("firefox").build();
-
-Given("a paginated list of available products", async function () {
-  await driver.get(URL);
-});
+} from "./constants.ts";
 
 // Scenario: Delete a product
 Given(
@@ -25,7 +20,7 @@ Given(
     const deleteButtons = await driver.findElements(
       By.css(DELETE_BUTTON_SELECTOR)
     );
-    expect(deleteButtons.length).toBeGreaterThan(0);
+    expect(deleteButtons.length).to.be.above(0);
   }
 );
 
@@ -53,14 +48,14 @@ Then(
 // Scenario: Enable mass delete button
 Given("a checkbox next to each product", async function () {
   const checkboxes = await driver.findElements(By.css(CHECKBOX_SELECTOR));
-  expect(checkboxes.length).toBeGreaterThan(0);
+  expect(checkboxes.length).to.be.above(0);
 });
 
 Given("a mass delete button", async function () {
   const massDeleteButton = await driver.findElement(
     By.css(MASS_DELETE_BUTTON_SELECTOR)
   );
-  expect(massDeleteButton).not.toBeNull();
+  expect(massDeleteButton).to.not.be.null;
 });
 
 When("the user selects at least one product checkbox", async function () {
@@ -72,7 +67,7 @@ Then("the mass delete button becomes clickable", async function () {
   const massDeleteButton = await driver.findElement(
     By.css(MASS_DELETE_BUTTON_SELECTOR)
   );
-  expect(await massDeleteButton.isEnabled()).toBeTruthy();
+  expect(await massDeleteButton.isEnabled()).to.be.true;
 });
 
 // Scenario: Delete multiple products
@@ -98,11 +93,6 @@ Then(
       10000
     );
     const products = await driver.findElements(By.css(PRODUCT_LIST_SELECTOR));
-    expect(products.length).toBeLessThan(2);
+    expect(products.length).to.be.below(2);
   }
 );
-
-// Close the WebDriver instance
-After(async function () {
-  await driver.quit();
-});
