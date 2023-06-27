@@ -2,7 +2,7 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { By } from "selenium-webdriver";
 import { expect } from "chai";
-import { driver } from "./setup.ts";
+import { driver } from "./setup";
 import {
   PRODUCT_LIST_SELECTOR,
   PRODUCT_NAME_SELECTOR,
@@ -12,7 +12,7 @@ import {
   RIGHT_ARROW_SELECTOR,
   LEFT_ARROW_SELECTOR,
   PRODUCT_SELECTOR,
-} from "./constants.ts";
+} from "./constants";
 
 Then(
   "the user is presented with a paginated list of all available products",
@@ -22,23 +22,41 @@ Then(
   }
 );
 
+Then("there are no more then 20 products on the page", async function () {
+  const productElements = await driver.findElements(By.css(PRODUCT_SELECTOR));
+  expect(
+    productElements.length,
+    "There should not be more than 20 products on the page"
+  ).to.be.at.most(20);
+});
+
 Then("each of the products has a name, a volume and a cost", async function () {
   const productNames = await driver.findElements(By.css(PRODUCT_NAME_SELECTOR));
-  productNames.forEach((name) => {
-    expect(name.getText()).to.not.be.empty;
-  });
-
   const productVolumes = await driver.findElements(
     By.css(PRODUCT_VOLUME_SELECTOR)
   );
-  productVolumes.forEach((volume) => {
-    expect(volume.getText()).to.not.be.empty;
-  });
-
   const productCosts = await driver.findElements(By.css(PRODUCT_COST_SELECTOR));
-  productCosts.forEach((cost) => {
-    expect(cost.getText()).to.not.be.empty;
-  });
+
+  const names = await Promise.all(
+    productNames.map(async (name) => name.getText())
+  );
+  const volumes = await Promise.all(
+    productVolumes.map(async (volume) => volume.getText())
+  );
+  const costs = await Promise.all(
+    productCosts.map(async (cost) => cost.getText())
+  );
+
+  const allNamesNotEmpty =
+    names.every((nameText) => nameText !== "") && names.length > 0;
+  const allVolumesNotEmpty =
+    volumes.every((volumeText) => volumeText !== "") && volumes.length > 0;
+  const allCostsNotEmpty =
+    costs.every((costText) => costText !== "") && costs.length > 0;
+
+  expect(allNamesNotEmpty, "Not all products have a name").to.be.true;
+  expect(allVolumesNotEmpty, "Not all products have a volume").to.be.true;
+  expect(allCostsNotEmpty, "Not all products have a cost").to.be.true;
 });
 
 When("the user clicks on a product in the list", async function () {

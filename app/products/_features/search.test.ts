@@ -3,14 +3,14 @@ import { Given, When, Then } from "@cucumber/cucumber";
 import { By } from "selenium-webdriver";
 import { expect } from "chai";
 
-import { driver } from "./setup.ts";
+import { driver } from "./setup";
 
 import {
   SEARCH_BAR_SELECTOR,
   PRODUCT_TITLE_SELECTOR,
   SEARCH_RESULTS_SELECTOR,
   ERROR_MESSAGE_SELECTOR,
-} from "./constants.ts";
+} from "./constants";
 
 Given("a search bar", async function () {
   const searchBar = await driver.findElement(By.css(SEARCH_BAR_SELECTOR));

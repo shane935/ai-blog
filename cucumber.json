@@ -1,7 +1,0 @@
-{
-  "default": {
-    "paths": ["app/**/_features/*.feature"],
-    "import": ["app/**/_features/*.test.ts"],
-    "publishQuiet": true
-  }
-}
