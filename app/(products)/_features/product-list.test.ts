@@ -144,5 +144,6 @@ Then("the left pagination arrow is not visible", async function () {
   } catch (e) {
     console.log(e);
     // findElement throws if it cant find the element
+    expect(false).to.be.true;
   }
 });
