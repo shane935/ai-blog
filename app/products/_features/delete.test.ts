@@ -2,7 +2,7 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "chai";
 import { By, until } from "selenium-webdriver";
-import { driver } from "./setup.ts";
+import { driver } from "./setup";
 
 // Import our constants
 import {
@@ -11,7 +11,7 @@ import {
   CHECKBOX_SELECTOR,
   MASS_DELETE_BUTTON_SELECTOR,
   URL,
-} from "./constants.ts";
+} from "./constants";
 
 // Scenario: Delete a product
 Given(

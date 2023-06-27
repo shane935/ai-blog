@@ -10,8 +10,10 @@ Feature: Product List
   @now
   Scenario: User can view the product page
     Then the user is presented with a paginated list of all available products
+    And there are no more then 20 products on the page
     And each of the products has a name, a volume and a cost
 
+  @now
   Scenario: User can view product details
     When the user clicks on a product in the list
     Then they are redirected to the details page for that product
