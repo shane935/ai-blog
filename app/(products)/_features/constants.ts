@@ -1,5 +1,6 @@
-export const URL = "http://localhost:3000/";
-export const PRODUCT_LIST_PAGE = "products";
+export const URL = "http://localhost:3000";
+export const PRODUCT_LIST_PAGE = "product-list";
+export const PRODUCT_PAGE = "product";
 
 export const SEARCH_BAR_SELECTOR = ".search-bar";
 export const PRODUCT_TITLE_SELECTOR = ".product-title";

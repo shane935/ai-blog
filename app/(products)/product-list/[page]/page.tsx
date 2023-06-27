@@ -1,7 +1,7 @@
-import React from "react";
+import React, { FunctionComponent } from "react";
 
 import { faker } from "@faker-js/faker";
-import ProductCard from "./components/product";
+import ProductCard from "../../components/product";
 
 const createProduct = (id: number) => {
   return {
@@ -14,7 +14,9 @@ const createProduct = (id: number) => {
 
 const data = Array.from({ length: 1000 }, (v, id) => createProduct(id));
 
-export default () => {
+const ProductList: FunctionComponent<{ params: { page: number } }> = ({
+  params: { page },
+}) => {
   return (
     <>
       <h1 className="text-2xl mb-8">Product List</h1>
@@ -26,13 +28,18 @@ export default () => {
       </div>
 
       <div className="flex justify-center mt-8">
-        <button className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          <span>&lt;</span>
-        </button>
-        <button className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        {page >= 1 && (
+          <button className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded left-arrow">
+            <span>&lt;</span>
+          </button>
+        )}
+
+        <button className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded right-arrow">
           <span>&gt;</span>
         </button>
       </div>
     </>
   );
 };
+
+export default ProductList;
