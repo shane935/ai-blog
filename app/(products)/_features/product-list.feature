@@ -33,6 +33,11 @@ Feature: Product List
     Then the left pagination arrow is not visible
 
   @developed
+  Scenario: The user wont see the right pagination arrow if they are on the last page
+    Given the user is on page 50 of the product list
+    Then the right pagination arrow is not visible
+
+  @developed
   Scenario Outline: User can navigate the paginated list
     Given the user is on page <current_page> of the product list
     When the user clicks the <arrow> pagination arrow

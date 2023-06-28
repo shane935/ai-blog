@@ -128,13 +128,19 @@ Then(
   }
 );
 
-Then("the left pagination arrow is not visible", async function () {
-  const leftArrowGetter = driver.wait(
-    driver.findElement(By.css(LEFT_ARROW_SELECTOR)),
-    5000
-  );
-  return await expect(
-    leftArrowGetter,
-    "the left pagination arrow shouldn't be visible"
-  ).to.eventually.be.rejected;
-});
+Then(
+  "the {word} pagination arrow is not visible",
+  async function (arrow: "left" | "right") {
+    const ARROW_SELECTOR =
+      arrow === "left" ? LEFT_ARROW_SELECTOR : RIGHT_ARROW_SELECTOR;
+
+    const arrowGetter = driver.wait(
+      driver.findElement(By.css(ARROW_SELECTOR)),
+      5000
+    );
+    return await expect(
+      arrowGetter,
+      `the ${arrow} pagination arrow shouldn't be visible`
+    ).to.eventually.be.rejected;
+  }
+);

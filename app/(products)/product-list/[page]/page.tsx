@@ -4,6 +4,8 @@ import { faker } from "@faker-js/faker";
 import ProductCard from "../../components/product";
 import Link from "next/link";
 
+const PAGE_SIZE = 20;
+
 const createProduct = (id: number) => {
   return {
     id,
@@ -24,7 +26,9 @@ const ProductList: FunctionComponent<{ params: { page: string } }> = ({
 }) => {
   const pageNum = parseInt(page);
 
-  const paginatedData = paginate(data, 20, pageNum);
+  const lastPage = Math.ceil(data.length / PAGE_SIZE);
+
+  const paginatedData = paginate(data, PAGE_SIZE, pageNum);
 
   return (
     <>
@@ -45,13 +49,14 @@ const ProductList: FunctionComponent<{ params: { page: string } }> = ({
             <span>&lt;</span>
           </Link>
         )}
-
-        <Link
-          href={`/product-list/${pageNum + 1}`}
-          className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded right-arrow"
-        >
-          <span>&gt;</span>
-        </Link>
+        {pageNum < lastPage && (
+          <Link
+            href={`/product-list/${pageNum + 1}`}
+            className="mx-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded right-arrow"
+          >
+            <span>&gt;</span>
+          </Link>
+        )}
       </div>
     </>
   );
