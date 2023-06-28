@@ -1,3 +1,5 @@
 import { Builder } from "selenium-webdriver";
 
-export const getDriver = () => new Builder().forBrowser("safari").build();
+const browser = process.env.TEST_BROWSER || "safari";
+
+export const getDriver = () => new Builder().forBrowser(browser).build();

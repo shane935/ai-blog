@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { After, Before, Given } from "@cucumber/cucumber";
 import { getDriver } from "./setup";
 import { PRODUCT_LIST_PAGE, URL } from "./constants";
