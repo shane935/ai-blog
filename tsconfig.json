@@ -34,10 +34,10 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/products/_features/shared.test.mts",
-    "app/products/_features/search.test.mts",
-    "app/products/_features/product-list.test.mts",
-    "app/products/_features/delete.test.mts"
+    "app/(products)/_features/shared.test.mts",
+    "app/(products)/_features/search.test.mts",
+    "app/(products)/_features/product-list.test.mts",
+    "app/(products)/_features/delete.test.mts"
   ],
   "exclude": ["node_modules"]
 }

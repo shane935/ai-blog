@@ -2,7 +2,7 @@
 import { Given, When, Then } from "@cucumber/cucumber";
 import { expect } from "chai";
 import { By, until } from "selenium-webdriver";
-import { driver } from "./setup";
+import { driver } from "./shared.test";
 
 // Import our constants
 import {

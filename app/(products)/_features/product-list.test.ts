@@ -1,9 +1,11 @@
 // Import necessary modules and constants
-import { Given, When, Then } from "@cucumber/cucumber";
-import { By } from "selenium-webdriver";
-import { expect } from "chai";
-import { driver } from "./setup";
+import { When, Then } from "@cucumber/cucumber";
+import { By, until } from "selenium-webdriver";
+import chai, { expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
+import { driver } from "./shared.test";
 import {
+  URL,
   PRODUCT_LIST_SELECTOR,
   PRODUCT_NAME_SELECTOR,
   PRODUCT_VOLUME_SELECTOR,
@@ -12,13 +14,17 @@ import {
   RIGHT_ARROW_SELECTOR,
   LEFT_ARROW_SELECTOR,
   PRODUCT_SELECTOR,
+  PRODUCT_LIST_PAGE,
 } from "./constants";
+import { waitForURL } from "./helpers";
+
+chai.use(chaiAsPromised);
 
 Then(
   "the user is presented with a paginated list of all available products",
   async function () {
     const productList = await driver.findElement(By.css(PRODUCT_LIST_SELECTOR));
-    expect(productList).to.exist;
+    expect(productList, "Product list should exist").to.exist;
   }
 );
 
@@ -67,49 +73,68 @@ When("the user clicks on a product in the list", async function () {
 Then(
   "they are redirected to the details page for that product",
   async function () {
-    const productDetail = await driver.findElement(
-      By.css(PRODUCT_DETAIL_SELECTOR)
+    const productDetail = await driver.wait(
+      until.elementLocated(By.css(PRODUCT_DETAIL_SELECTOR)),
+      3000
     );
-    expect(productDetail).to.exist;
+    expect(
+      productDetail,
+      "User should be redirected to the product details page"
+    ).to.exist;
   }
 );
 
-Given("the user is on the first page of the product list", function () {
-  // Assumed as part of the test setup
-});
-
 Then("the right pagination arrow is visible", async function () {
-  const rightArrow = await driver.findElement(By.css(RIGHT_ARROW_SELECTOR));
-  expect(rightArrow.isDisplayed()).to.be.true;
-});
-
-Given("the user is on the second page of the product list", function () {
-  // Needs implementation. You would need to navigate to the second page here.
+  const rightArrow = await driver.wait(
+    until.elementLocated(By.css(RIGHT_ARROW_SELECTOR)),
+    3000
+  );
+  expect(
+    await rightArrow.isDisplayed(),
+    "Right pagination arrow should be visible"
+  ).to.be.true;
 });
 
 Then("the left pagination arrow is visible", async function () {
-  const leftArrow = await driver.findElement(By.css(LEFT_ARROW_SELECTOR));
-  expect(leftArrow.isDisplayed()).to.be.true;
-});
-
-Given("the user is on page {int} of the product list", function (page: number) {
-  // Needs implementation. You would need to navigate to the corresponding page here.
+  const leftArrow = await driver.wait(
+    until.elementLocated(By.css(LEFT_ARROW_SELECTOR)),
+    3000
+  );
+  expect(
+    await leftArrow.isDisplayed(),
+    "Left pagination arrow should be visible"
+  ).to.be.true;
 });
 
 When(
-  "the user clicks the {string} pagination arrow",
+  "the user clicks the {word} pagination arrow",
   async function (arrow: string) {
     const arrowSelector =
       arrow === "left" ? LEFT_ARROW_SELECTOR : RIGHT_ARROW_SELECTOR;
     const arrowElement = await driver.findElement(By.css(arrowSelector));
-    await arrowElement.click();
+    return await arrowElement.click();
   }
 );
 
 Then(
   "the user is moved to page {int} of the product list",
   async function (expectedPage: number) {
+    await waitForURL(`${URL}/${PRODUCT_LIST_PAGE}/${expectedPage}`, driver);
     const currentUrl = await driver.getCurrentUrl();
-    expect(currentUrl).to.include(expectedPage.toString());
+    expect(
+      currentUrl,
+      `User should be moved to page ${expectedPage} of the product list`
+    ).to.include(expectedPage.toString());
   }
 );
+
+Then("the left pagination arrow is not visible", async function () {
+  const leftArrowGetter = driver.wait(
+    driver.findElement(By.css(LEFT_ARROW_SELECTOR)),
+    5000
+  );
+  return await expect(
+    leftArrowGetter,
+    "the left pagination arrow shouldn't be visible"
+  ).to.eventually.be.rejected;
+});
