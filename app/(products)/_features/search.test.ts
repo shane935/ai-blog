@@ -3,7 +3,7 @@ import { Given, When, Then } from "@cucumber/cucumber";
 import { By } from "selenium-webdriver";
 import { expect } from "chai";
 
-import { driver } from "./setup";
+import { driver } from "./shared.test";
 
 import {
   SEARCH_BAR_SELECTOR,

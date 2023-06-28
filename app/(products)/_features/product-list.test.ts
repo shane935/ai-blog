@@ -1,8 +1,9 @@
 // Import necessary modules and constants
-import { Given, When, Then } from "@cucumber/cucumber";
+import { When, Then } from "@cucumber/cucumber";
 import { By, until } from "selenium-webdriver";
-import { expect } from "chai";
-import { driver } from "./setup";
+import chai, { expect } from "chai";
+import chaiAsPromised from "chai-as-promised";
+import { driver } from "./shared.test";
 import {
   URL,
   PRODUCT_LIST_SELECTOR,
@@ -13,9 +14,11 @@ import {
   RIGHT_ARROW_SELECTOR,
   LEFT_ARROW_SELECTOR,
   PRODUCT_SELECTOR,
-  PRODUCT_PAGE,
   PRODUCT_LIST_PAGE,
 } from "./constants";
+import { waitForURL } from "./helpers";
+
+chai.use(chaiAsPromised);
 
 Then(
   "the user is presented with a paginated list of all available products",
@@ -81,10 +84,6 @@ Then(
   }
 );
 
-Given("the user is on the first page of the product list", async function () {
-  await driver.get(`${URL}/${PRODUCT_LIST_PAGE}/1`);
-});
-
 Then("the right pagination arrow is visible", async function () {
   const rightArrow = await driver.wait(
     until.elementLocated(By.css(RIGHT_ARROW_SELECTOR)),
@@ -94,10 +93,6 @@ Then("the right pagination arrow is visible", async function () {
     await rightArrow.isDisplayed(),
     "Right pagination arrow should be visible"
   ).to.be.true;
-});
-
-Given("the user is on the second page of the product list", async function () {
-  await driver.get(`${URL}/${PRODUCT_LIST_PAGE}/2`);
 });
 
 Then("the left pagination arrow is visible", async function () {
@@ -112,18 +107,19 @@ Then("the left pagination arrow is visible", async function () {
 });
 
 When(
-  "the user clicks the {string} pagination arrow",
+  "the user clicks the {word} pagination arrow",
   async function (arrow: string) {
     const arrowSelector =
       arrow === "left" ? LEFT_ARROW_SELECTOR : RIGHT_ARROW_SELECTOR;
     const arrowElement = await driver.findElement(By.css(arrowSelector));
-    await arrowElement.click();
+    return await arrowElement.click();
   }
 );
 
 Then(
   "the user is moved to page {int} of the product list",
   async function (expectedPage: number) {
+    await waitForURL(`${URL}/${PRODUCT_LIST_PAGE}/${expectedPage}`, driver);
     const currentUrl = await driver.getCurrentUrl();
     expect(
       currentUrl,
@@ -133,17 +129,12 @@ Then(
 );
 
 Then("the left pagination arrow is not visible", async function () {
-  try {
-    const leftArrow = await driver.findElement(By.css(LEFT_ARROW_SELECTOR));
-
-    console.log({ leftArrow });
-    expect(
-      leftArrow,
-      "Left arrow should not be visible on first page"
-    ).to.be.false;
-  } catch (e) {
-    console.log(e);
-    // findElement throws if it cant find the element
-    expect(false).to.be.true;
-  }
+  const leftArrowGetter = driver.wait(
+    driver.findElement(By.css(LEFT_ARROW_SELECTOR)),
+    5000
+  );
+  return await expect(
+    leftArrowGetter,
+    "the left pagination arrow shouldn't be visible"
+  ).to.eventually.be.rejected;
 });
