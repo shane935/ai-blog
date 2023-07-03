@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "cucumber-js --require-module ts-node/register"
+    "test": "cucumber-js --require-module ts-node/register",
+    "build-tests": "docker build --build-arg BROWSER=firefox -t firefox-test-container . && docker build -t chrome-test-container .",
+    "test-chrome": "docker run -p 3001:3001 -v $(pwd)/app:/usr/src/app chrome-test-container",
+    "test-firefox": "docker run -p 3002:3002 -v $(pwd)/app:/usr/src/app firefox-test-container"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
